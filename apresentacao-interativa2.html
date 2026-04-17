@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BASE/labs — Automação Inteligente de Processos (RPA + IA)</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue: #1a3a6e;
+  --blue-light: #2a5298;
+  --blue-dark: #0f2347;
+  --lime: #c5e03c;
+  --lime-dark: #9ab82e;
+  --white: #ffffff;
+  --gray-bg: #f5f5f5;
+  --gray-text: #555;
+  --gray-light: #e8e8e8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', 'SF Pro Display', -apple-system, sans-serif; background: var(--gray-bg); color: #333; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(26,58,110,0.2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(26,58,110,0.4); }
+
+/* ── Header ── */
+.app-header {
+  background: var(--white);
+  border-bottom: 3px solid var(--blue);
+  padding: 0 clamp(16px,3vw,32px);
+  display: flex; align-items: center; height: 60px;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.logo {
+  font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 1.1rem;
+  color: var(--blue); display: flex; align-items: center; gap: 8px; margin-right: 32px; flex-shrink: 0;
+}
+.logo-bar { width: 8px; height: 24px; background: var(--blue); border-radius: 2px; }
+.logo span { font-weight: 400; }
+nav { display: flex; gap: 2px; overflow: auto; flex: 1; }
+nav button {
+  background: transparent; color: var(--blue-dark); border: none; padding: 8px 14px;
+  border-radius: 8px; cursor: pointer; font-size: 0.82rem; font-weight: 600;
+  white-space: nowrap; transition: all 0.25s; font-family: inherit;
+}
+nav button.active { background: var(--blue); color: var(--white); }
+nav button:hover:not(.active) { background: rgba(26,58,110,0.07); }
+
+/* ── Main ── */
+main {
+  flex: 1; padding: clamp(20px,4vw,40px) clamp(16px,4vw,48px);
+  max-width: 1100px; margin: 0 auto; width: 100%;
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ── Footer ── */
+footer {
+  background: var(--blue-dark); color: rgba(255,255,255,0.5);
+  text-align: center; padding: 16px; font-size: 0.78rem;
+}
+
+/* ── Typography ── */
+.section-title {
+  font-family: 'JetBrains Mono', monospace; font-size: clamp(1.6rem,4vw,2.6rem);
+  color: var(--blue); margin-bottom: 12px; font-weight: 700; letter-spacing: -0.5px;
+}
+.section-sub { font-size: 1.05rem; color: var(--gray-text); line-height: 1.7; max-width: 800; margin-bottom: 32px; }
+
+/* ── Cards ── */
+.card {
+  background: var(--white); border-radius: 14px; padding: 28px 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06); transition: all 0.35s ease;
+}
+.card.hover:hover { box-shadow: 0 12px 40px rgba(26,58,110,0.18); transform: translateY(-4px); }
+.card.clickable { cursor: pointer; }
+
+/* ── Badge ── */
+.badge {
+  display: inline-block; padding: 4px 14px; border-radius: 20px;
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
+  color: var(--white);
+}
+
+/* ── Animations ── */
+@keyframes fadeSlideIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pulse {
+  0%,100% { box-shadow: 0 4px 20px rgba(197,224,60,0.3); }
+  50% { box-shadow: 0 4px 30px rgba(197,224,60,0.55), 0 0 0 8px rgba(197,224,60,0.15); }
+}
+.fade-in { animation: fadeIn 0.6s ease both; }
+.fade-in-delay-1 { animation: fadeIn 0.6s ease 0.1s both; }
+.fade-in-delay-2 { animation: fadeIn 0.6s ease 0.2s both; }
+.fade-in-delay-3 { animation: fadeIn 0.6s ease 0.3s both; }
+
+/* ── Hero ── */
+.hero {
+  background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue) 60%, var(--blue-light) 100%);
+  border-radius: 20px; padding: clamp(32px,6vw,60px) clamp(24px,4vw,48px);
+  color: var(--white); margin-bottom: 40px; position: relative; overflow: hidden;
+}
+.hero-circle-1 { position:absolute; right:-60px; top:-60px; width:260px; height:260px; background:var(--lime); opacity:0.08; border-radius:50%; }
+.hero-circle-2 { position:absolute; left:30%; bottom:-30px; width:180px; height:180px; background:var(--lime); opacity:0.05; border-radius:50%; }
+.hero h1 {
+  font-family: 'JetBrains Mono', monospace; font-size: clamp(2rem,5vw,3.4rem);
+  font-weight: 800; margin: 20px 0 16px; line-height: 1.1;
+}
+.hero p { font-size: 1.15rem; opacity: 0.85; max-width: 600; line-height: 1.6; }
+.hero-date { display:inline-block; margin-top:20px; background:var(--lime); color:var(--blue-dark); padding:6px 18px; border-radius:8px; font-weight:700; font-size:0.85rem; }
+
+/* ── Grid helpers ── */
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+@media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* ── Team card ── */
+.team-avatar {
+  width: 90px; height: 90px; border-radius: 50%; margin: 0 auto 14px;
+  background: linear-gradient(135deg, var(--blue), var(--blue-light));
+  display: block; object-fit: cover;
+  box-shadow: 0 4px 16px rgba(26,58,110,0.2);
+}
+.team-name { font-size: 1.1rem; color: var(--blue-dark); margin-bottom: 4px; font-weight: 700; }
+.team-role { font-size: 0.82rem; color: var(--lime-dark); font-weight: 700; margin-bottom: 10px; }
+.team-bio { font-size: 0.85rem; color: var(--gray-text); line-height: 1.55; }
+.team-link {
+  display: inline-block; margin-top: 12px; font-size: 0.8rem; color: var(--blue); font-weight: 600;
+  text-decoration: none; padding: 6px 14px; border: 1px solid rgba(26,58,110,0.2); border-radius: 8px;
+  transition: all 0.2s;
+}
+.team-link:hover { background: var(--blue); color: var(--white); }
+
+/* ── Ecosystem ── */
+.eco-container {
+  position: relative; width: 100%; max-width: 900px; margin: 0 auto; height: 420px;
+  background: linear-gradient(135deg, var(--gray-bg), #eef1f6); border-radius: 20px; overflow: hidden;
+}
+.eco-node {
+  position: absolute; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  opacity: 0; transform: scale(0.3); transition: all 0.5s ease;
+}
+.eco-node.visible { opacity: 1; transform: scale(1); }
+.eco-dot { width: 18px; height: 18px; border-radius: 50%; background: var(--blue); box-shadow: 0 2px 8px rgba(26,58,110,0.35); }
+.eco-label { font-size: 0.72rem; font-weight: 600; color: var(--blue-dark); white-space: nowrap; background: rgba(255,255,255,0.85); padding: 2px 8px; border-radius: 6px; }
+.eco-center {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+  cursor: pointer; text-align: center; z-index: 10;
+}
+.eco-matter {
+  width: 110px; height: 110px; border-radius: 50%;
+  background: radial-gradient(circle, var(--lime), var(--lime-dark));
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(197,224,60,0.3);
+  transition: all 0.5s ease; animation: pulse 2.5s ease-in-out infinite;
+}
+.eco-matter.expanded { animation: none; box-shadow: 0 0 0 12px rgba(197,224,60,0.25), 0 8px 30px rgba(197,224,60,0.4); }
+.eco-matter span { font-weight: 800; font-size: 0.9rem; color: var(--blue-dark); }
+.eco-hint { margin-top: 8px; font-size: 0.75rem; color: var(--gray-text); font-weight: 500; }
+
+/* ── Client categories ── */
+.cat-header {
+  display: flex; align-items: center; gap: 12px; padding: 14px 20px;
+  border-radius: 12px; cursor: pointer; transition: all 0.35s ease;
+  font-weight: 700; font-size: 1rem; margin-bottom: 4px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+}
+.cat-header:hover { filter: brightness(0.97); }
+.cat-arrow { transition: transform 0.3s; font-size: 1.2rem; }
+.cat-arrow.open { transform: rotate(90deg); }
+.cat-count { margin-left: auto; opacity: 0.7; font-size: 0.82rem; font-weight: 500; }
+.cat-items { max-height: 0; overflow: hidden; transition: max-height 0.45s ease; }
+.cat-items.open { max-height: 300px; }
+.cat-items-inner { display: flex; flex-wrap: wrap; gap: 10px; padding: 14px 8px 8px; }
+.cat-chip {
+  display: inline-block; padding: 8px 16px; border-radius: 10px;
+  font-size: 0.88rem; font-weight: 600;
+}
+
+/* ── Timeline ── */
+.timeline { position: relative; padding-left: 40px; margin-top: 20px; }
+.timeline-line {
+  position: absolute; left: 18px; top: 0; bottom: 0; width: 3px;
+  background: linear-gradient(to bottom, var(--blue), var(--lime)); border-radius: 3px;
+}
+.timeline-item { position: relative; margin-bottom: 24px; cursor: pointer; }
+.timeline-dot {
+  position: absolute; left: -32px; top: 18px; width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem; transition: all 0.3s; z-index: 2; border-width: 3px; border-style: solid;
+}
+.timeline-details { max-height: 0; overflow: hidden; transition: max-height 0.45s ease, margin 0.3s; }
+.timeline-details.open { max-height: 250px; margin-top: 16px; }
+.timeline-tag {
+  display: inline-block; padding: 6px 14px; border-radius: 8px;
+  font-size: 0.82rem; font-weight: 600; margin: 3px;
+}
+.timeline-toggle { font-size: 0.75rem; margin-top: 10px; opacity: 0.7; font-weight: 600; }
+
+/* ── McKinsey stat ── */
+.mckinsey-box {
+  background: linear-gradient(135deg, var(--blue-dark), var(--blue));
+  border-radius: 18px; padding: 40px 32px; color: var(--white); text-align: center; margin-top: 24px;
+}
+.mckinsey-num {
+  font-family: 'JetBrains Mono', monospace; font-size: clamp(3rem,8vw,5rem);
+  font-weight: 900; color: var(--lime);
+}
+
+/* ── Cases ── */
+.case-card { border-top: 4px solid var(--blue); transition: all 0.3s; }
+.case-section-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+.case-result-chip {
+  display: inline-block; background: rgba(26,58,110,0.07); color: var(--blue-dark);
+  padding: 5px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 500; margin: 3px;
+}
+.case-detail { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; }
+.case-detail.open { max-height: 800px; }
+
+/* ── Mini chart ── */
+.chart-bar { height: 18px; border-radius: 4px; transition: width 1s ease; min-width: 20px; }
+.chart-label { font-size: 0.72rem; font-weight: 700; }
+
+/* ── Stats row ── */
+.stat-box { text-align: center; padding: 16px 10px; }
+.stat-value { font-family: 'JetBrains Mono', monospace; font-size: clamp(1.8rem,4vw,2.4rem); font-weight: 800; line-height: 1; }
+.stat-label { font-size: 0.85rem; color: var(--gray-text); margin-top: 6px; }
+
+/* ── Stat cards top ── */
+.stat-card-top {
+  text-align: center; padding: 28px 24px; border-radius: 14px; color: var(--white);
+}
+.stat-card-top .num { font-family: 'JetBrains Mono', monospace; font-size: 2.4rem; font-weight: 900; }
+.stat-card-top .lbl { font-size: 0.85rem; opacity: 0.8; margin-top: 4px; }
+
+/* ── RPA steps ── */
+.rpa-steps { display: flex; gap: 0; align-items: flex-start; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
+.rpa-step { flex: 1; min-width: 140px; display: flex; flex-direction: column; align-items: center; position: relative; }
+.rpa-step-icon {
+  width: 64px; height: 64px; border-radius: 50%; background: var(--blue); color: var(--white);
+  display: flex; align-items: center; justify-content: center; font-size: 1.6rem; position: relative; z-index: 2;
+}
+.rpa-step-connector { position: absolute; top: 30px; left: 60%; width: 80%; height: 3px; background: var(--lime); z-index: 1; }
+.rpa-step-title { font-family: 'JetBrains Mono', monospace; font-size: 0.88rem; font-weight: 700; color: var(--blue-dark); margin-top: 10px; }
+.rpa-step-desc { font-size: 0.78rem; color: var(--gray-text); text-align: center; margin-top: 4px; }
+
+/* ── Side by side lists ── */
+.side-list-item { padding: 16px 18px; display: flex; gap: 10px; align-items: flex-start; }
+.side-list-item .icon { font-size: 1.3rem; flex-shrink: 0; }
+.side-list-item .title { font-weight: 700; font-size: 0.92rem; color: var(--blue-dark); }
+.side-list-item .desc { font-size: 0.82rem; color: var(--gray-text); margin-top: 2px; }
+
+/* ── Flow animation ── */
+.flow-steps { display: flex; gap: 0; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
+.flow-step { display: flex; align-items: center; }
+.flow-node { display: flex; flex-direction: column; align-items: center; width: 110px; text-align: center; transition: all 0.4s ease; }
+.flow-circle {
+  width: 60px; height: 60px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; transition: all 0.4s ease; border: 3px solid transparent;
+}
+.flow-circle.active { border-width: 3px; border-style: solid; }
+.flow-connector { width: 30px; height: 3px; border-radius: 2px; margin-top: -20px; transition: background 0.4s; }
+.flow-label { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; font-weight: 700; margin-top: 8px; }
+.flow-desc { font-size: 0.7rem; color: var(--gray-text); margin-top: 3px; min-height: 32px; }
+
+/* ── Agent capabilities ── */
+.cap-sidebar { display: flex; flex-direction: column; gap: 8px; }
+.cap-btn {
+  padding: 14px 16px; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 0.9rem;
+  transition: all 0.3s; display: flex; align-items: center; gap: 8px;
+  border: none; text-align: left; font-family: inherit;
+}
+.cap-btn.active { background: var(--blue); color: var(--white); box-shadow: 0 4px 16px rgba(26,58,110,0.3); }
+.cap-btn:not(.active) { background: var(--white); color: var(--blue-dark); box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
+.cap-detail-icon { font-size: 2rem; margin-bottom: 12px; }
+.cap-detail-title { font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; color: var(--blue); margin-bottom: 10px; }
+.cap-detail-desc { font-size: 1rem; color: var(--gray-text); line-height: 1.65; }
+
+/* ── Comparison table ── */
+.comp-table { min-width: 700px; }
+.comp-header { display: grid; grid-template-columns: 180px 1fr 1fr; gap: 2px; margin-bottom: 4px; }
+.comp-header div { background: var(--blue-dark); color: var(--white); padding: 12px 16px; font-weight: 700; font-size: 0.85rem; }
+.comp-header div:first-child { border-radius: 12px 0 0 0; }
+.comp-header div:last-child { border-radius: 0 12px 0 0; }
+.comp-row { display: grid; grid-template-columns: 180px 1fr 1fr; gap: 2px; margin-bottom: 2px; transition: all 0.2s; }
+.comp-row:hover { transform: scale(1.01); }
+.comp-row .name-cell {
+  padding: 14px 16px; font-weight: 700; font-size: 0.92rem;
+  font-family: 'JetBrains Mono', monospace; transition: all 0.3s;
+}
+.comp-row .data-cell { padding: 14px 16px; font-size: 0.88rem; color: var(--gray-text); transition: all 0.3s; }
+
+/* ── Autonomy bars ── */
+.autonomy-row { display: grid; grid-template-columns: 140px 1fr; gap: 12px; align-items: center; margin-bottom: 14px; }
+.autonomy-label { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: 700; }
+.autonomy-bars { display: flex; gap: 4px; }
+.autonomy-bar {
+  flex: 1; height: 28px; border-radius: 6px; transition: all 0.5s ease;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 700; color: var(--white);
+}
+
+/* ── Conclusion ── */
+.conclusion {
+  background: linear-gradient(135deg, var(--blue-dark), var(--blue));
+  border-radius: 20px; padding: 40px 32px; color: var(--white); text-align: center;
+}
+.conclusion h3 { font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; margin-bottom: 20px; }
+.conclusion-step { background: rgba(255,255,255,0.1); border-radius: 14px; padding: 20px 16px; }
+.conclusion-step .icon { font-size: 1.6rem; margin-bottom: 8px; }
+.conclusion-step .title { font-weight: 700; font-size: 1rem; margin-bottom: 6px; }
+.conclusion-step .desc { font-size: 0.85rem; opacity: 0.85; line-height: 1.5; }
+.location-chip {
+  display: inline-block; background: var(--lime); color: var(--blue-dark);
+  padding: 6px 14px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; margin: 4px;
+}
+
+/* ── Dark card variants ── */
+.card-dark { background: linear-gradient(135deg, var(--blue-dark), var(--blue)); color: var(--white); }
+.card-lime { background: var(--lime); color: var(--blue-dark); }
+.inner-box-dark { background: rgba(255,255,255,0.1); padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; margin-top: 12px; }
+.inner-box-lime { background: rgba(0,0,0,0.08); padding: 10px 14px; border-radius: 10px; font-size: 0.85rem; margin-top: 12px; }
+
+.mono { font-family: 'JetBrains Mono', monospace; }
+.mb-40 { margin-bottom: 40px; }
+.mb-30 { margin-bottom: 30px; }
+.mb-20 { margin-bottom: 20px; }
+.mb-16 { margin-bottom: 16px; }
+.mt-40 { margin-top: 40px; }
+.mt-20 { margin-top: 20px; }
+.mt-16 { margin-top: 16px; }
+.text-center { text-align: center; }
+
+/* ── Vigi.AI tags ── */
+.vigi-tag { display: inline-block; background: rgba(255,255,255,0.15); padding: 8px 16px; border-radius: 10px; font-size: 0.82rem; margin: 4px; }
+
+/* ── LLM warning ── */
+.llm-warning { background: #FFF3E0; padding: 10px 16px; border-radius: 10px; font-size: 0.85rem; color: #E65100; font-weight: 500; margin-top: 14px; }
+
+/* ── Caution tags ── */
+.caution-tag { display: inline-block; background: rgba(26,58,110,0.07); color: var(--blue); padding: 10px 18px; border-radius: 10px; font-size: 0.88rem; font-weight: 700; margin: 4px; }
+
+.process-item { font-size: 0.82rem; color: var(--gray-text); padding: 3px 0; }
+.process-item:not(:last-child) { border-bottom: 1px solid var(--gray-light); }
+
+/* ── IA adds list ── */
+.ia-list-item { padding: 6px 0; font-size: 0.88rem; opacity: 0.9; }
+.ia-list-item:not(:last-child) { border-bottom: 1px solid rgba(255,255,255,0.1); }
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header class="app-header">
+  <div class="logo">
+    <div class="logo-bar"></div>
+    BASE/<span>labs</span>
+  </div>
+  <nav id="main-nav"></nav>
+</header>
+
+<!-- ═══ MAIN ═══ -->
+<main id="app-main"></main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>BASE/labs © 2026 — Automação Inteligente de Processos (RPA + IA)</footer>
+
+<script>
+// ─────────────────────────────────────────────
+//  DATA
+// ─────────────────────────────────────────────
+
+const TABS = [
+  { id: "quem-somos", label: "Quem Somos" },
+  { id: "historia", label: "História do RPA" },
+  { id: "cases", label: "Cases Reais" },
+  { id: "sobre-rpa", label: "Sobre o RPA" },
+  { id: "rpa-ia", label: "RPA + IA" },
+  { id: "agentes", label: "Agentes de IA" },
+  { id: "comparativo", label: "Comparativo" },
+];
+
+const CLIENT_CATEGORIES = {
+  "Financeiro": { color: "#1565C0", items: ["BMG Money","Inter","BS2","BMG","Santander","Itaú","Direto","PJUS","Ailos","Banco do Brasil"] },
+  "Tecnologia": { color: "#E65100", items: ["WayCarbon","Sigga","Bulbe","Blink","K","IP Media","Galera.bet"] },
+  "Construção Civil": { color: "#2E7D32", items: ["Direcional","EZTec","Telesil","Supermix"] },
+  "M&A": { color: "#6A1B9A", items: ["Kuarup Capital","Iole Capital"] },
+  "Outros": { color: "#37474F", items: ["Loc Frotas","EXC Seguros","Sanchez & Sanchez","Unimed BH","Localiza","C&A","Petz","Hermes Pardini","InvestPlay"] },
+};
+
+const ECOSYSTEM = [
+  { name:"BASE 2", x:20, y:18 }, { name:"BASE/labs", x:38, y:12 }, { name:"Almabrands", x:56, y:14 },
+  { name:"Matter Academy", x:74, y:20 }, { name:"Kait", x:14, y:34 }, { name:"beePO", x:8, y:50 },
+  { name:"Smart Business Lab", x:4, y:66 }, { name:"Direciona.me", x:80, y:38 }, { name:"Umanse", x:88, y:52 },
+];
+
+const TEAM = [
+  { name:"Roque Almeida", photo:"https://media.licdn.com/dms/image/v2/D4D03AQEO4hC6LVJkKA/profile-displayphoto-scale_400_400/B4DZiK8v9fHwAo-/0/1754677838193?e=1778112000&v=beta&t=BIux6jfts7WTWRoR2XvPol_Q_AArl-IeY5x855L6jCQ", role:"CEO Grupo Matter&CO", linkedin:"https://www.linkedin.com/in/roquealmeida/" },
+  { name:"Hugo Barros", photo:"https://media.licdn.com/dms/image/v2/D4D03AQHH9j_dui84Mg/profile-displayphoto-scale_400_400/B4DZh58Df7HwAg-/0/1754392445280?e=1778112000&v=beta&t=S3Z7BDAzDtMkQPUz1cnGXVan_IwmmF6U639wuGCJUGU", role:"CEO na Base Labs", linkedin:"https://www.linkedin.com/in/hvbarros/" },
+  { name:"Robert Pereira", photo:"https://media.licdn.com/dms/image/v2/D4D03AQF4UjzBtU3M3g/profile-displayphoto-scale_400_400/B4DZjnApslH0Ag-/0/1756222365034?e=1778112000&v=beta&t=awxDsKbABhsP-pVqPyvdhTczxoDzrZ3vCO-1JC4rIhA", role:"CEO Base2", linkedin:"https://www.linkedin.com/in/robert-pereira/" },
+];
+
+const TIMELINE_DATA = [
+  { era:"O Problema Original", icon:"⚠️", color:"#c62828", desc:"Empresas conviveram com tarefas repetitivas que consumiam horas preciosas. Profissionais viravam 'integrações humanas' — transportando dados manualmente entre plataformas.", details:["Copiar e colar entre sistemas","Conferir e-mails e planilhas manualmente","Atualizar ERPs com dados avulsos","Enviar solicitações para aprovação"] },
+  { era:"Macros e Scripts", icon:"📊", color:"#1565C0", desc:"Equipes de TI encontraram formas criativas de reduzir trabalho manual dentro de ferramentas individuais — mas com limites claros.", details:["Macros no Excel para cálculos repetitivos","Scripts em Python ou VBScript","Atalhos e templates padronizados","Limitado a tarefas isoladas"] },
+  { era:"Surge o RPA", icon:"🤖", color:"#2E7D32", desc:"Um robô de software passou a imitar o que um humano faria na tela — em qualquer sistema, sem necessidade de integração via API.", details:["Disponibilidade 24/7","~0% erros por distração","Implementação rápida","Funciona em sistemas legados"] },
+  { era:"RPA + IA (Hiperautomação)", icon:"🧠", color:"#6A1B9A", desc:"A IA resolve o que o RPA não conseguia entender — e o RPA executa o que a IA decide. Juntos, cobrem da interpretação à operação.", details:["Leitura e interpretação de PDFs","Compreensão de e-mails","Classificação automática","Extração de dados variados"] },
+  { era:"Agentes de IA", icon:"🚀", color:"#E65100", desc:"Não apenas executam tarefas — planejam, decidem e adaptam suas ações para atingir objetivos de forma autônoma.", details:["Memória de contexto","Acesso a ferramentas/APIs","Execução de ações concretas","Planejamento autônomo"] },
+];
+
+const CASES_DATA = [
+  { title:"DARFs Atrasadas", client:"Direcional Engenharia", challenge:"Gestão manual de DARFs em atraso era crítica e suscetível a falhas humanas, com risco de multas e penalidades.", solution:"Robô monitora automaticamente o status das guias, identifica vencimentos, calcula encargos e inicia fluxos de regularização.", results:["Eliminação de atrasos por falha humana","Redução significativa do tempo de tratativa","Maior segurança no cumprimento fiscal","Equipe redirecionada para análises estratégicas"], humanTime:"1585h (9 meses)", rpaTime:"623h (26 dias)", chart:[{t:"Inserir juros/multa",m:779,r:326},{t:"Inserir verba insumo",m:134,r:130},{t:"Lançamento DARF",m:672,r:167}] },
+  { title:"Escrituração Contagem", client:"Direcional Engenharia", challenge:"Volume alto de lançamentos contábeis manuais, risco de erros de digitação e processo dependente de profissionais específicos.", solution:"Robô executa a escrituração contábil de forma autônoma, seguindo regras de negócio definidas pela equipe financeira.", results:["Maior precisão nos registros contábeis","Redução de retrabalho","Liberação da equipe para análise e fechamento"], humanTime:"27h", rpaTime:"17h", chart:[{t:"NFS-e Fase 1",m:18,r:12},{t:"NFS-e Fase 2",m:4,r:3},{t:"NFS-e Fase 3",m:4,r:3}] },
+  { title:"Processo Suframa", client:"Direcional Engenharia", challenge:"Processos regulatórios específicos da Suframa com alta demanda de documentação e interações com sistemas governamentais.", solution:"Robô realiza login nos portais regulatórios, coleta e valida dados, protocola documentos e registra evidências.", results:["Conformidade regulatória garantida","Menos esforço operacional","Redução de risco de penalidades","Aceleração de trâmites"], humanTime:"18h", rpaTime:"4h10min", chart:[{t:"Geração guia Fase 1",m:4,r:2},{t:"Planilha cálculo Fase 2",m:8,r:2},{t:"Solicitação SP Fase 3",m:6,r:0.16}] },
+  { title:"Exclusive Seguros", client:"Exclusive Seguros", challenge:"Processo totalmente manual de movimentações de vidas em operadoras de saúde — lento, repetitivo e suscetível a falhas.", solution:"Automação completa do fluxo de movimentações com RPA, garantindo velocidade e precisão.", results:["3.756 vidas atualizadas na Unimed","1m49s de tempo médio por movimentação","15 empresas atendidas","347 movimentações concluídas com precisão"], humanTime:"", rpaTime:"1m49s/mov.", chart:[] },
+  { title:"Sicoob — Cooperativas", client:"Sicoob", challenge:"Cadastro de clientes, abertura de contas e processamento de formulários realizados manualmente.", solution:"Automatização completa dos processos operacionais do cooperativismo de crédito.", results:["Redução de até 80% no tempo operacional","Economia de 10% a 20% nos custos","Equipes liberadas para atividades estratégicas"], humanTime:"", rpaTime:"80% mais rápido", chart:[] },
+  { title:"Embracon — Financeiro", client:"Embracon", challenge:"Tarefas manuais em análise de crédito, contratos e gestão documental.", solution:"Substituição de tarefas manuais por automação RPA nos processos financeiros.", results:["Economia anual de ~R$ 1 milhão","12.000 horas economizadas/ano","ROI de ~308%","Retorno em ~13 meses"], humanTime:"", rpaTime:"ROI 308%", chart:[] },
+];
+
+const FLOW_STEPS = [
+  { icon:"📄", label:"NF em PDF", desc:"Nota fiscal chega em formato PDF por e-mail", color:"#555" },
+  { icon:"🧠", label:"IA extrai", desc:"IA interpreta e extrai dados do documento", color:"#6A1B9A" },
+  { icon:"✅", label:"RPA Valida", desc:"RPA aplica regras de negócio e valida dados", color:"#1a3a6e" },
+  { icon:"🤖", label:"RPA Lança", desc:"RPA insere os dados no sistema ERP", color:"#2E7D32" },
+  { icon:"👤", label:"Aprovação", desc:"RPA envia para aprovação do gestor", color:"#E65100" },
+];
+
+const CAPABILITIES = [
+  { icon:"🧠", title:"Memória", desc:"Retém contexto de interações anteriores para tomar decisões mais precisas ao longo do tempo." },
+  { icon:"🔧", title:"Acesso a Ferramentas", desc:"Conecta-se a APIs, bancos de dados, sistemas e aplicações para buscar e enviar informações." },
+  { icon:"⚡", title:"Execução de Ações", desc:"Vai além de sugerir — realiza ações concretas nos sistemas como enviar e-mails, criar registros ou acionar outros agentes." },
+  { icon:"🗺️", title:"Planejamento Autônomo", desc:"Divide objetivos complexos em etapas, executa cada uma e ajusta o plano conforme os resultados." },
+];
+
+const TECHS = [
+  { name:"Macro / Script", what:"Automatiza dentro de uma única ferramenta", best:"Tarefas isoladas em Excel ou sistemas internos", color:"#78909C", level:1 },
+  { name:"RPA", what:"Executa tarefas repetitivas em múltiplos sistemas", best:"Alto volume, regras claras, sistemas legados", color:"#1a3a6e", level:2 },
+  { name:"IA + RPA", what:"Entende conteúdo e executa ações", best:"Documentos variados, e-mails, decisões baseadas em dados", color:"#6A1B9A", level:3 },
+  { name:"Agente de IA", what:"Orquestra múltiplas ferramentas com base em objetivo", best:"Processos complexos, decisões adaptativas, workflows dinâmicos", color:"#E65100", level:4 },
+];
+
+// ─────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────
+let activeTab = "quem-somos";
+let ecoExpanded = false;
+let expandedCat = null;
+let expandedTimeline = null;
+let expandedCase = null;
+let selectedCap = 0;
+let flowIdx = -1;
+let flowTimer = null;
+
+// ─────────────────────────────────────────────
+//  RENDER NAV
+// ─────────────────────────────────────────────
+function renderNav() {
+  const nav = document.getElementById("main-nav");
+  nav.innerHTML = TABS.map(t =>
+    `<button class="${t.id === activeTab ? 'active' : ''}" onclick="switchTab('${t.id}')">${t.label}</button>`
+  ).join("");
+}
+
+function switchTab(id) {
+  activeTab = id;
+  expandedCat = null; expandedTimeline = null; expandedCase = null; selectedCap = 0;
+  if (flowTimer) clearInterval(flowTimer);
+  flowIdx = -1;
+  renderNav();
+  renderContent();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─────────────────────────────────────────────
+//  RENDER CONTENT
+// ─────────────────────────────────────────────
+function renderContent() {
+  const main = document.getElementById("app-main");
+  switch (activeTab) {
+    case "quem-somos": main.innerHTML = renderQuemSomos(); initEcosystem(); break;
+    case "historia": main.innerHTML = renderHistoria(); break;
+    case "cases": main.innerHTML = renderCases(); break;
+    case "sobre-rpa": main.innerHTML = renderSobreRPA(); break;
+    case "rpa-ia": main.innerHTML = renderRPAIA(); startFlow(); break;
+    case "agentes": main.innerHTML = renderAgentes(); break;
+    case "comparativo": main.innerHTML = renderComparativo(); break;
+  }
+}
+
+// ─────────────────────────────────────────────
+//  TAB 1: QUEM SOMOS
+// ─────────────────────────────────────────────
+function renderQuemSomos() {
+  return `
+    <!-- Hero -->
+    <div class="hero fade-in">
+      <div class="hero-circle-1"></div>
+      <div class="hero-circle-2"></div>
+      <span class="badge" style="background:var(--lime);color:var(--blue-dark)">BASE/labs</span>
+      <h1>Automação Inteligente<br>de Processos</h1>
+      <p>RPA + IA — transformando operações empresariais com tecnologia de ponta, do planejamento estratégico à execução autônoma.</p>
+      <div class="hero-date">04 / 03 / 26</div>
+    </div>
+
+    <!-- Team -->
+    <div class="fade-in-delay-1">
+      <h2 class="section-title">Nossa Equipe</h2>
+      <div class="grid-3 mb-40">
+        ${TEAM.map((p,i) => `
+          <div class="card hover text-center" style="animation-delay:${0.15+i*0.1}s">
+            <img src="${p.photo}" alt="${p.name}" class="team-avatar" style="object-fit:cover" referrerpolicy="no-referrer">
+            <div class="team-name">${p.name}</div>
+            <div class="team-role">${p.role}</div>
+            <a href="${p.linkedin}" target="_blank" rel="noopener noreferrer" class="team-link">LinkedIn →</a>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+
+    <!-- Ecosystem -->
+    <div class="fade-in-delay-2">
+      <h2 class="section-title">Ecossistema matter&Co.</h2>
+      <p class="section-sub">Composto por empresas com expertises complementares, atuamos de forma colaborativa, integrando planejamento estratégico, tecnologia e gestão de pessoas.</p>
+      <div class="eco-container" id="eco-container">
+        <svg style="position:absolute;inset:0;width:100%;height:100%" viewBox="0 0 900 420">
+          <ellipse cx="450" cy="210" rx="380" ry="170" fill="none" stroke="#c0c8d8" stroke-width="1.5" stroke-dasharray="8 6" id="eco-orbit" opacity="0.3"/>
+        </svg>
+        ${ECOSYSTEM.map((n,i) => `
+          <div class="eco-node" id="eco-node-${i}" style="left:${n.x}%;top:${n.y}%;transition-delay:${i*0.08}s">
+            <div class="eco-dot"></div>
+            <span class="eco-label">${n.name}</span>
+          </div>
+        `).join("")}
+        <div class="eco-center" onclick="toggleEcosystem()">
+          <div class="eco-matter" id="eco-matter">
+            <span>matter&Co.</span>
+          </div>
+          <div class="eco-hint" id="eco-hint">Clique para explorar</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Clients -->
+    <div class="fade-in-delay-3 mt-40">
+      <h2 class="section-title">Nossos Clientes</h2>
+      <p class="section-sub">Clique em uma categoria para explorar as empresas atendidas.</p>
+      <div id="clients-container">
+        ${renderClients()}
+      </div>
+    </div>
+  `;
+}
+
+function renderClients() {
+  return Object.entries(CLIENT_CATEGORIES).map(([cat, data]) => {
+    const isOpen = expandedCat === cat;
+    return `
+      <div style="margin-bottom:8px">
+        <div class="cat-header" onclick="toggleCat('${cat}')" style="background:${isOpen ? data.color : 'var(--white)'};color:${isOpen ? 'var(--white)' : 'var(--blue-dark)'}; box-shadow:${isOpen ? '0 6px 24px '+data.color+'44' : '0 1px 6px rgba(0,0,0,0.06)'}">
+          <span class="cat-arrow ${isOpen?'open':''}">▶</span>
+          ${cat}
+          <span class="cat-count">${data.items.length} empresas</span>
+        </div>
+        <div class="cat-items ${isOpen?'open':''}">
+          <div class="cat-items-inner">
+            ${data.items.map((c,j) => `
+              <span class="cat-chip" style="background:${data.color}12;color:${data.color};border:1px solid ${data.color}30;${isOpen?'animation:fadeSlideIn 0.4s ease '+j*0.05+'s both':''}">${c}</span>
+            `).join("")}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function toggleCat(cat) {
+  expandedCat = expandedCat === cat ? null : cat;
+  document.getElementById("clients-container").innerHTML = renderClients();
+}
+
+function initEcosystem() { ecoExpanded = false; }
+
+function toggleEcosystem() {
+  ecoExpanded = !ecoExpanded;
+  const matter = document.getElementById("eco-matter");
+  const hint = document.getElementById("eco-hint");
+  const orbit = document.getElementById("eco-orbit");
+  matter.classList.toggle("expanded", ecoExpanded);
+  hint.textContent = ecoExpanded ? "Clique para recolher" : "Clique para explorar";
+  orbit.setAttribute("opacity", ecoExpanded ? "0.7" : "0.3");
+  ECOSYSTEM.forEach((_, i) => {
+    const node = document.getElementById(`eco-node-${i}`);
+    if (ecoExpanded) {
+      setTimeout(() => node.classList.add("visible"), i * 180);
+    } else {
+      node.classList.remove("visible");
+    }
+  });
+}
+
+// ─────────────────────────────────────────────
+//  TAB 2: HISTÓRIA
+// ─────────────────────────────────────────────
+function renderHistoria() {
+  return `
+    <div class="fade-in">
+      <h2 class="section-title">Da Automação Tradicional aos Agentes de IA</h2>
+      <p class="section-sub">Como evoluímos do RPA aos sistemas autônomos — e o que isso significa para o futuro das organizações.</p>
+    </div>
+    <div class="timeline">
+      <div class="timeline-line"></div>
+      ${TIMELINE_DATA.map((item,i) => {
+        const isOpen = expandedTimeline === i;
+        return `
+          <div class="timeline-item" onclick="toggleTimeline(${i})" style="animation:fadeSlideIn 0.5s ease ${i*0.12}s both">
+            <div class="timeline-dot" style="background:${isOpen?item.color:'var(--white)'};border-color:${item.color}">${isOpen?'':item.icon}</div>
+            <div class="card" style="border-left:4px solid ${item.color};background:${isOpen?item.color+'08':'var(--white)'}">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                <span style="font-size:1.3rem">${item.icon}</span>
+                <h3 class="mono" style="font-size:1.15rem;color:${item.color};margin:0">${item.era}</h3>
+              </div>
+              <p style="font-size:0.92rem;color:var(--gray-text);line-height:1.6;margin:0">${item.desc}</p>
+              <div class="timeline-details ${isOpen?'open':''}">
+                <div style="display:flex;flex-wrap:wrap;gap:8px">
+                  ${item.details.map((d,j) => `<span class="timeline-tag" style="background:${item.color}14;color:${item.color};border:1px solid ${item.color}25;${isOpen?'animation:fadeSlideIn 0.35s ease '+j*0.08+'s both':''}">${d}</span>`).join("")}
+                </div>
+              </div>
+              <div class="timeline-toggle" style="color:${item.color}">${isOpen?'▲ Clique para recolher':'▼ Clique para expandir'}</div>
+            </div>
+          </div>
+        `;
+      }).join("")}
+    </div>
+    <div class="mckinsey-box fade-in-delay-3" style="margin-top:32px">
+      <p style="font-size:1.05rem;opacity:0.9;margin-bottom:12px">Estudo da McKinsey & Company constatou que ao automatizar tarefas manuais e repetitivas, as empresas conseguem reduzir custos em até</p>
+      <div class="mckinsey-num">60%</div>
+      <p style="font-size:1rem;opacity:0.8;margin-top:8px">ao mesmo tempo em que aumentam a agilidade e a qualidade das entregas.</p>
+    </div>
+  `;
+}
+
+function toggleTimeline(idx) {
+  expandedTimeline = expandedTimeline === idx ? null : idx;
+  renderContent();
+}
+
+// ─────────────────────────────────────────────
+//  TAB 3: CASES
+// ─────────────────────────────────────────────
+function renderCases() {
+  return `
+    <div class="fade-in">
+      <h2 class="section-title">Cases Reais de RPA no Brasil</h2>
+      <p class="section-sub">Clique em cada case para explorar desafios, soluções e resultados obtidos.</p>
+    </div>
+    <div class="grid-3">
+      ${CASES_DATA.map((c,i) => {
+        const isOpen = expandedCase === i;
+        const maxVal = c.chart.length ? Math.max(...c.chart.map(d=>Math.max(d.m,d.r))) : 1;
+        return `
+          <div class="card hover clickable case-card" onclick="toggleCase(${i})" style="background:${isOpen?'rgba(26,58,110,0.03)':'var(--white)'};animation:fadeSlideIn 0.5s ease ${i*0.08}s both">
+            <span class="badge" style="background:var(--blue)">${c.client}</span>
+            <h3 class="mono" style="font-size:1.1rem;color:var(--blue-dark);margin:12px 0 8px">${c.title}</h3>
+            ${!isOpen ? `<p style="font-size:0.85rem;color:var(--gray-text);line-height:1.55">${c.challenge.substring(0,100)}...</p>` : ''}
+            <div class="case-detail ${isOpen?'open':''}">
+              ${isOpen ? `
+                <div style="margin-bottom:14px">
+                  <div class="case-section-label" style="color:#c62828">Desafio</div>
+                  <p style="font-size:0.88rem;color:var(--gray-text);line-height:1.55;margin:0">${c.challenge}</p>
+                </div>
+                <div style="margin-bottom:14px">
+                  <div class="case-section-label" style="color:#2E7D32">Solução RPA</div>
+                  <p style="font-size:0.88rem;color:var(--gray-text);line-height:1.55;margin:0">${c.solution}</p>
+                </div>
+                <div style="margin-bottom:14px">
+                  <div class="case-section-label" style="color:var(--blue)">Resultados</div>
+                  <div style="display:flex;flex-wrap:wrap;gap:6px">
+                    ${c.results.map(r => `<span class="case-result-chip">✓ ${r}</span>`).join("")}
+                  </div>
+                </div>
+                ${c.humanTime ? `
+                  <div style="display:flex;gap:20px;margin:16px 0;justify-content:center;flex-wrap:wrap">
+                    <div class="stat-box"><div class="stat-value" style="color:#ef5350">${c.humanTime}</div><div class="stat-label">Trabalho Humano</div></div>
+                    <div style="display:flex;align-items:center;font-size:1.5rem;color:var(--gray-text)">→</div>
+                    <div class="stat-box"><div class="stat-value" style="color:#66bb6a">${c.rpaTime}</div><div class="stat-label">Com RPA</div></div>
+                  </div>
+                ` : ''}
+                ${c.chart.length ? `
+                  <div style="margin-top:20px">
+                    <div style="font-size:0.82rem;font-weight:700;color:var(--blue);margin-bottom:12px">Comparativo Horas: Manual vs RPA</div>
+                    ${c.chart.map(d => `
+                      <div style="margin-bottom:14px">
+                        <div style="font-size:0.78rem;color:var(--gray-text);margin-bottom:4px;font-weight:600">${d.t}</div>
+                        <div style="display:flex;gap:6px;align-items:center"><div style="flex:1;display:flex;align-items:center;gap:6px"><div class="chart-bar" style="background:#ef5350;width:${(d.m/maxVal)*100}%"></div><span class="chart-label" style="color:#ef5350">${d.m}h</span></div></div>
+                        <div style="display:flex;gap:6px;align-items:center;margin-top:3px"><div style="flex:1;display:flex;align-items:center;gap:6px"><div class="chart-bar" style="background:#66bb6a;width:${(d.r/maxVal)*100}%"></div><span class="chart-label" style="color:#66bb6a">${d.r}h</span></div></div>
+                      </div>
+                    `).join("")}
+                    <div style="display:flex;gap:16px;margin-top:8px;font-size:0.72rem">
+                      <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#ef5350;display:inline-block"></span> Manual</span>
+                      <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:#66bb6a;display:inline-block"></span> RPA</span>
+                    </div>
+                  </div>
+                ` : ''}
+              ` : ''}
+            </div>
+            <div style="font-size:0.75rem;color:var(--blue);margin-top:10px;font-weight:600;opacity:0.6">${isOpen?'▲ Recolher':'▼ Ver detalhes'}</div>
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
+function toggleCase(idx) {
+  expandedCase = expandedCase === idx ? null : idx;
+  renderContent();
+}
+
+// ─────────────────────────────────────────────
+//  TAB 4: SOBRE RPA
+// ─────────────────────────────────────────────
+function renderSobreRPA() {
+  const rpaSteps = [
+    { icon:"🔓", title:"Abrir sistema", desc:"Abre o sistema e faz login" },
+    { icon:"🖥️", title:"Navegar telas", desc:"Navega pelas telas do aplicativo" },
+    { icon:"📝", title:"Preencher dados", desc:"Preenche campos com dados" },
+    { icon:"⚙️", title:"Regras negócio", desc:"Executa regras de negócio" },
+  ];
+  const excellentAt = [
+    { icon:"📈", title:"Alto Volume", desc:"Centenas ou milhares de transações diárias — escala sem custo adicional por unidade." },
+    { icon:"📋", title:"Regras Claras", desc:"Decisões com critérios bem definidos e sem ambiguidade." },
+    { icon:"🔄", title:"Processos Padronizados", desc:"Fluxos com etapas consistentes e previsíveis." },
+    { icon:"🏛️", title:"Sistemas Legados sem API", desc:"Atua pela interface gráfica como um usuário humano." },
+  ];
+  const struggles = [
+    { icon:"🎨", title:"Mudança de Layout", desc:"Qualquer alteração visual pode 'quebrar' o robô." },
+    { icon:"📄", title:"PDFs Desestruturados", desc:"Documentos sem padrão fixo são ilegíveis." },
+    { icon:"🔀", title:"Muitas Exceções", desc:"Alta variabilidade exige julgamento situacional." },
+    { icon:"🤔", title:"Decisões Subjetivas", desc:"Contexto e interpretação estão fora do alcance." },
+  ];
+  const automatable = {
+    "Financeiro & Contábil": ["Conciliação bancária e boletos","Processamento de faturas e NFs","Relatórios financeiros automatizados"],
+    "TI & Operações": ["Abertura e fechamento de chamados","Integração de sistemas legados","Extração e consolidação de dados"],
+    "Atendimento & Vendas": ["Respostas automáticas digitais","Cadastro de clientes e produtos","Follow-up de propostas"],
+    "Supply Chain & Logística": ["Emissão de etiquetas e documentos","Gestão de pedidos e inventário","Integração transportadoras/ERPs"],
+  };
+
+  return `
+    <div class="fade-in">
+      <h2 class="section-title">O Que é RPA?</h2>
+      <p class="section-sub">Robotic Process Automation — um robô de software que imita exatamente o que um humano faria na tela, em qualquer sistema, sem necessidade de integração via API.</p>
+    </div>
+    <div class="fade-in-delay-1" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:40px">
+      <div class="stat-card-top" style="background:linear-gradient(135deg,var(--blue-dark),var(--blue));border-radius:14px"><div class="num">24/7</div><div class="lbl">Disponibilidade</div></div>
+      <div class="stat-card-top" style="background:linear-gradient(135deg,var(--blue),var(--blue-light));border-radius:14px"><div class="num">~0%</div><div class="lbl">Erros por distração</div></div>
+      <div class="stat-card-top" style="background:linear-gradient(135deg,var(--lime-dark),var(--lime));color:var(--blue-dark);border-radius:14px"><div class="num">Rápido</div><div class="lbl">Implementação</div></div>
+    </div>
+    <div class="fade-in-delay-1">
+      <h3 class="mono" style="font-size:1.2rem;color:var(--blue);margin-bottom:16px">Como o RPA Funciona</h3>
+      <div class="rpa-steps">
+        ${rpaSteps.map((s,i) => `
+          <div class="rpa-step">
+            <div class="rpa-step-icon">${s.icon}</div>
+            ${i < rpaSteps.length - 1 ? '<div class="rpa-step-connector"></div>' : ''}
+            <div class="rpa-step-title">${s.title}</div>
+            <div class="rpa-step-desc">${s.desc}</div>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+    <div class="grid-2 mb-40">
+      <div class="fade-in-delay-2">
+        <h3 class="mono" style="font-size:1.1rem;color:#2E7D32;margin-bottom:14px">✅ Onde o RPA É Excelente</h3>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          ${excellentAt.map(item => `
+            <div class="card side-list-item" style="border-left:3px solid #2E7D32">
+              <span class="icon">${item.icon}</span>
+              <div><div class="title">${item.title}</div><div class="desc">${item.desc}</div></div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+      <div class="fade-in-delay-2">
+        <h3 class="mono" style="font-size:1.1rem;color:#c62828;margin-bottom:14px">⚠️ Onde o RPA Sofre</h3>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          ${struggles.map(item => `
+            <div class="card side-list-item" style="border-left:3px solid #c62828">
+              <span class="icon">${item.icon}</span>
+              <div><div class="title">${item.title}</div><div class="desc">${item.desc}</div></div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    </div>
+    <div class="fade-in-delay-3">
+      <h3 class="mono" style="font-size:1.1rem;color:var(--blue);margin-bottom:14px">Processos que Podem Ser Automatizados</h3>
+      <div class="grid-4">
+        ${Object.entries(automatable).map(([cat, items], i) => `
+          <div class="card" style="padding:18px;background:${i%2===0?'rgba(26,58,110,0.04)':'var(--white)'}">
+            <div style="font-weight:700;font-size:0.92rem;color:var(--blue);margin-bottom:8px">${cat}</div>
+            ${items.map((item,j) => `<div class="process-item">→ ${item}</div>`).join("")}
+          </div>
+        `).join("")}
+      </div>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────
+//  TAB 5: RPA + IA
+// ─────────────────────────────────────────────
+function renderRPAIA() {
+  return `
+    <div class="fade-in">
+      <h2 class="section-title">Automação Inteligente: RPA + IA</h2>
+      <span class="badge" style="background:#6A1B9A">HIPERAUTOMAÇÃO</span>
+      <p class="section-sub mt-16">A Hiperautomação combina a precisão de execução do RPA com a capacidade de compreensão da Inteligência Artificial. A IA resolve o que o RPA não conseguia entender — e o RPA executa o que a IA decide.</p>
+    </div>
+    <div class="grid-2 mb-40 fade-in-delay-1">
+      <div class="card card-dark">
+        <h3 class="mono" style="font-size:1.05rem;margin-bottom:14px">O que a IA adiciona</h3>
+        ${["Leitura e interpretação de PDFs","Compreensão de e-mails em linguagem natural","Classificação automática de solicitações","Extração de dados de documentos variados"].map((item,i) => `<div class="ia-list-item">• ${item}</div>`).join("")}
+      </div>
+      <div class="card">
+        <h3 class="mono" style="font-size:1.05rem;color:var(--blue);margin-bottom:14px">O RPA continua executando</h3>
+        <p style="font-size:0.9rem;color:var(--gray-text);line-height:1.65">A IA não substitui o RPA — ela o potencializa. Enquanto a IA <strong style="color:var(--blue)">entende o conteúdo</strong>, o RPA <strong style="color:var(--blue)">executa as ações</strong> nos sistemas. Juntos, cobrem todo o fluxo: da interpretação à operação.</p>
+      </div>
+    </div>
+    <div class="fade-in-delay-2">
+      <h3 class="mono" style="font-size:1.1rem;color:var(--blue);margin-bottom:20px">Exemplo: Contas a Pagar com IA</h3>
+      <div class="flow-steps" id="flow-container">
+        ${renderFlowSteps()}
+      </div>
+      <div style="background:rgba(26,58,110,0.05);border-radius:12px;padding:14px 20px;text-align:center;font-size:0.88rem;color:var(--gray-text);line-height:1.55;margin-top:16px">
+        🔑 <strong>A diferença fundamental:</strong> o sistema agora <strong>entende o conteúdo</strong> dos documentos — não apenas executa etapas fixas. Isso permite processar qualquer formato de nota fiscal, de qualquer fornecedor.
+      </div>
+    </div>
+    <div class="mt-40 fade-in-delay-3">
+      <div class="card card-dark" style="padding:32px">
+        <span class="badge" style="background:var(--lime);color:var(--blue-dark)">Produto</span>
+        <h3 class="mono" style="font-size:1.3rem;margin:14px 0 10px">Vigi.AI — Monitoramento Inteligente de Imagens</h3>
+        <p style="font-size:0.92rem;opacity:0.9;line-height:1.65;max-width:700px">Utiliza automação para coleta de imagens em tempo real e IA para análises avançadas sobre o uso correto de EPIs em obras. Caso haja irregularidade, envia alertas automáticos para supervisores.</p>
+        <div style="margin-top:20px;display:flex;flex-wrap:wrap;gap:8px">
+          <span class="vigi-tag">📷 Coleta em tempo real</span>
+          <span class="vigi-tag">🧠 Análise por IA</span>
+          <span class="vigi-tag">🚨 Alertas automáticos</span>
+          <span class="vigi-tag">🏗️ Segurança proativa</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderFlowSteps() {
+  return FLOW_STEPS.map((s,i) => {
+    const isActive = flowIdx === i;
+    const isPast = flowIdx > i;
+    return `
+      <div class="flow-step">
+        <div class="flow-node" style="opacity:${isActive?1:isPast?0.5:0.3};transform:${isActive?'scale(1.1)':'scale(1)'}">
+          <div class="flow-circle ${isActive?'active':''}" style="background:${isActive?s.color:isPast?s.color+'40':'var(--gray-light)'};${isActive?'border-color:'+s.color+';box-shadow:0 4px 20px '+s.color+'50':''}">${s.icon}</div>
+          <div class="flow-label" style="color:${isActive?s.color:'var(--gray-text)'}">${s.label}</div>
+          <div class="flow-desc">${isActive?s.desc:''}</div>
+        </div>
+        ${i < FLOW_STEPS.length-1 ? `<div class="flow-connector" style="background:${isPast?'var(--lime)':'var(--gray-light)'}"></div>` : ''}
+      </div>
+    `;
+  }).join("");
+}
+
+function startFlow() {
+  if (flowTimer) clearInterval(flowTimer);
+  flowIdx = -1;
+  flowTimer = setInterval(() => {
+    flowIdx = flowIdx >= FLOW_STEPS.length - 1 ? -1 : flowIdx + 1;
+    const container = document.getElementById("flow-container");
+    if (container) container.innerHTML = renderFlowSteps();
+  }, 1800);
+}
+
+// ─────────────────────────────────────────────
+//  TAB 6: AGENTES
+// ─────────────────────────────────────────────
+function renderAgentes() {
+  const limitations = [
+    { title:"Respostas Plausíveis, mas Incorretas", desc:"LLMs podem gerar informações que soam corretas mas são factualmente erradas — 'alucinação'.", color:"#c62828" },
+    { title:"Interpretação Equivocada de Contexto", desc:"Ambiguidades na linguagem podem levar a ações indesejadas.", color:"#E65100" },
+    { title:"Erros com Alto Impacto", desc:"Uma decisão automatizada incorreta pode impactar contratos, clientes ou dados financeiros.", color:"#6A1B9A" },
+  ];
+  return `
+    <div class="fade-in">
+      <h2 class="section-title">A Nova Onda: Agentes de IA</h2>
+      <p class="section-sub">Os Agentes de IA não apenas executam tarefas — eles planejam, decidem e adaptam suas ações para atingir objetivos.</p>
+    </div>
+    <div class="fade-in-delay-1">
+      <div class="card" style="border-left:4px solid var(--blue);background:rgba(26,58,110,0.03);margin-bottom:30px">
+        <h3 class="mono" style="font-size:1.05rem;color:var(--blue);margin-bottom:8px">Primeiro: O Que é um LLM? (Large Language Model)</h3>
+        <p style="font-size:0.9rem;color:var(--gray-text);line-height:1.6;margin-bottom:12px">Um modelo de IA treinado em enormes volumes de texto para compreender e gerar linguagem humana. É o "motor de raciocínio" por trás dos agentes de IA modernos.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          ${["Entende linguagem natural","Gera texto coerente","Responde perguntas","Raciocina sobre instruções"].map(item => `<span style="background:rgba(26,58,110,0.08);color:var(--blue);padding:6px 14px;border-radius:8px;font-size:0.82rem;font-weight:600">→ ${item}</span>`).join("")}
+        </div>
+        <div class="llm-warning">⚠️ O LLM, sozinho, apenas responde. Ele não age, não acessa sistemas e não executa tarefas. Para isso, precisa estar dentro de uma estrutura maior — o Agente.</div>
+      </div>
+    </div>
+    <div class="fade-in-delay-1">
+      <h3 class="mono" style="font-size:1.1rem;color:var(--blue);margin-bottom:16px">O Que é um Agente de IA?</h3>
+      <div class="grid-2 mb-40" style="grid-template-columns:200px 1fr">
+        <div class="cap-sidebar">
+          ${CAPABILITIES.map((cap,i) => `
+            <button class="cap-btn ${selectedCap===i?'active':''}" onclick="selectCap(${i})">
+              <span style="font-size:1.2rem">${cap.icon}</span> ${cap.title}
+            </button>
+          `).join("")}
+        </div>
+        <div class="card" style="display:flex;flex-direction:column;justify-content:center;min-height:160px" id="cap-detail">
+          <div class="cap-detail-icon">${CAPABILITIES[selectedCap].icon}</div>
+          <h4 class="cap-detail-title">${CAPABILITIES[selectedCap].title}</h4>
+          <p class="cap-detail-desc">${CAPABILITIES[selectedCap].desc}</p>
+        </div>
+      </div>
+    </div>
+    <div class="grid-2 mb-40 fade-in-delay-2">
+      <div class="card card-dark">
+        <h4 class="mono" style="font-size:1rem;margin-bottom:8px">RPA + IA</h4>
+        <p style="font-size:0.88rem;opacity:0.9;line-height:1.6">Executa um fluxo previamente definido. Cada etapa é conhecida antecipadamente.</p>
+        <div class="inner-box-dark">✈️ Como um <strong>piloto automático com rota programada</strong>: eficiente, previsível, seguro — mas limitado ao trajeto definido.</div>
+      </div>
+      <div class="card card-lime">
+        <h4 class="mono" style="font-size:1rem;margin-bottom:8px">Agente de IA</h4>
+        <p style="font-size:0.88rem;line-height:1.6">Decide como atingir um objetivo em tempo real. Avalia o contexto, planeja e adapta o caminho.</p>
+        <div class="inner-box-lime">🚗 Como um <strong>motorista que decide o melhor caminho</strong>: autônomo, adaptável, capaz de contornar imprevistos.</div>
+      </div>
+    </div>
+    <div class="fade-in-delay-2">
+      <h3 class="mono" style="font-size:1.1rem;color:#c62828;margin-bottom:16px">⚠️ Por Que Ainda Não Confiar Totalmente?</h3>
+      <div class="grid-3">
+        ${limitations.map(lim => `
+          <div class="card" style="border-top:4px solid ${lim.color}">
+            <h4 style="font-size:0.95rem;color:${lim.color};margin-bottom:8px">${lim.title}</h4>
+            <p style="font-size:0.85rem;color:var(--gray-text);line-height:1.55;margin:0">${lim.desc}</p>
+          </div>
+        `).join("")}
+      </div>
+      <div style="margin-top:16px;display:flex;gap:12px;flex-wrap:wrap">
+        ${["Tecnologia em Evolução","Supervisão Humana Necessária","Governança como Pilar"].map((item,i) => `<span class="caution-tag">${i+1}. ${item}</span>`).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function selectCap(idx) {
+  selectedCap = idx;
+  // Update buttons
+  document.querySelectorAll('.cap-btn').forEach((btn,i) => {
+    btn.classList.toggle('active', i === idx);
+  });
+  // Update detail
+  const detail = document.getElementById('cap-detail');
+  if (detail) {
+    detail.innerHTML = `
+      <div class="cap-detail-icon">${CAPABILITIES[idx].icon}</div>
+      <h4 class="cap-detail-title">${CAPABILITIES[idx].title}</h4>
+      <p class="cap-detail-desc">${CAPABILITIES[idx].desc}</p>
+    `;
+  }
+}
+
+// ─────────────────────────────────────────────
+//  TAB 7: COMPARATIVO
+// ─────────────────────────────────────────────
+function renderComparativo() {
+  return `
+    <div class="fade-in">
+      <h2 class="section-title">Comparativo Final das Tecnologias</h2>
+      <p class="section-sub">Cada camada tecnológica tem seu papel, e a evolução não elimina a anterior — ela amplia as possibilidades.</p>
+    </div>
+    <div class="fade-in-delay-1" style="overflow-x:auto;margin-bottom:40px">
+      <div class="comp-table">
+        <div class="comp-header">
+          <div>Tecnologia</div><div>O que faz</div><div>Melhor para</div>
+        </div>
+        ${TECHS.map((t,i) => `
+          <div class="comp-row" style="cursor:default">
+            <div class="name-cell" style="background:${t.color}15;color:${t.color};${i===TECHS.length-1?'border-radius:0 0 0 12px':''}" onmouseenter="this.style.background='${t.color}';this.style.color='#fff'" onmouseleave="this.style.background='${t.color}15';this.style.color='${t.color}'">${t.name}</div>
+            <div class="data-cell" style="background:${i%2===0?'var(--white)':'var(--gray-bg)'}">${t.what}</div>
+            <div class="data-cell" style="background:${i%2===0?'var(--white)':'var(--gray-bg)'};${i===TECHS.length-1?'border-radius:0 0 12px 0':''}">${t.best}</div>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+    <div class="fade-in-delay-2">
+      <h3 class="mono" style="font-size:1.1rem;color:var(--blue);margin-bottom:20px">Complexidade & Autonomia</h3>
+      ${TECHS.map(t => `
+        <div class="autonomy-row">
+          <span class="autonomy-label" style="color:${t.color}">${t.name}</span>
+          <div class="autonomy-bars">
+            ${[1,2,3,4].map(level => `
+              <div class="autonomy-bar" style="background:${level<=t.level?'linear-gradient(90deg,'+t.color+','+t.color+'cc)':t.color+'15'};color:${level<=t.level?'#fff':'transparent'}">${level<=t.level?'●':''}</div>
+            `).join("")}
+          </div>
+        </div>
+      `).join("")}
+    </div>
+    <div class="conclusion mt-40 fade-in-delay-3">
+      <h3>Conclusões</h3>
+      <p style="font-size:1rem;opacity:0.9;line-height:1.7;max-width:700px;margin:0 auto 28px">A jornada da automação não tem um destino final — é uma evolução contínua que acompanha o avanço das tecnologias e as necessidades dos negócios.</p>
+      <div class="grid-3" style="gap:16px">
+        ${[
+          { icon:"🔍", title:"Explore", desc:"Mapeie processos repetitivos e identifique oportunidades de automação." },
+          { icon:"🧪", title:"Experimente", desc:"Inicie com um projeto piloto de RPA ou IA em um processo de alto impacto." },
+          { icon:"🚀", title:"Evolua", desc:"Incorpore IA e agentes para resolver desafios cada vez mais complexos." },
+        ].map(item => `
+          <div class="conclusion-step">
+            <div class="icon">${item.icon}</div>
+            <div class="title">${item.title}</div>
+            <div class="desc">${item.desc}</div>
+          </div>
+        `).join("")}
+      </div>
+      <div style="margin-top:32px;border-top:1px solid rgba(255,255,255,0.2);padding-top:24px">
+        <div class="mono" style="font-size:1.1rem;margin-bottom:8px">OBRIGADO!</div>
+        <div style="font-size:0.9rem;opacity:0.8">Hugo Barros — hbarros@baselabs.com.br</div>
+        <div style="margin-top:16px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
+          ${["São Paulo - SP","Belo Horizonte - MG","Maceió - AL","Orlando - EUA"].map(loc => `<span class="location-chip">📍 ${loc}</span>`).join("")}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────
+renderNav();
+renderContent();
+</script>
+</body>
+</html>
