@@ -399,9 +399,31 @@ const ECOSYSTEM = [
 ];
 
 const TEAM = [
-  { name:"Roque Almeida", initials:"RA", role:"Sócio-fundador & CEO", linkedin:"https://www.linkedin.com/in/roquealmeida/", bio:"Líder visionário com vasta experiência em transformação digital e gestão estratégica de negócios de tecnologia." },
-  { name:"HV Barros", initials:"HB", role:"Head de Automação & IA", linkedin:"https://www.linkedin.com/in/hvbarros/", bio:"Especialista em automação inteligente (RPA + IA), responsável pela estratégia e entrega de soluções de automação para grandes clientes." },
-  { name:"Robert Pereira", initials:"RP", role:"Diretor de Tecnologia", linkedin:"https://www.linkedin.com/in/robert-pereira/", bio:"Expert em arquitetura de sistemas e soluções tecnológicas inovadoras para o mercado corporativo." },
+  const TEAM = [
+  {
+    name: "Roque Almeida", 
+    initials: "RA", 
+    role: "Sócio-fundador & CEO", 
+    linkedin: "https://www.linkedin.com/in/roque-almeida/", 
+    bio: "CEO da Matter&Co",
+    image: "https://media.licdn.com/dms/image/v2/D4D03AQEO4hC6LVJkKA/profile-displayphoto-scale_400_400/B4DZiK8v9fHwAo-/0/1754677838193?e=1778112000&v=beta&t=BIux6jfts7WTWRoR2XvPol_Q_AArl-IeY5x855L6jCQ"
+  },
+  {
+    name: "Hugo Barros", 
+    initials: "HB", 
+    role: "CEO na Base Labs", 
+    linkedin: "https://www.linkedin.com/in/hvbarros/", 
+    bio: "Especialista em automação inteligente (RPA + IA), responsável pela estratégia e entrega de soluções de automação para grandes clientes.",
+    image: "https://media.licdn.com/dms/image/v2/D4D03AQHH9j_dui84Mg/profile-displayphoto-scale_400_400/B4DZh58Df7HwAg-/0/1754392445280?e=1778112000&v=beta&t=S3Z7BDAzDtMkQPUz1cnGXVan_IwmmF6U639wuGCJUGU"
+  },
+  {
+    name: "Robert Pereira", 
+    initials: "RP", 
+    role: "CEO at Base2", 
+    linkedin: "https://www.linkedin.com/in/robertpereirapinto/", 
+    bio: "Expert em arquitetura de sistemas e soluções tecnológicas inovadoras para o mercado corporativo.",
+    image: "https://media.licdn.com/dms/image/v2/D4D03AQF4UjzBtU3M3g/profile-displayphoto-scale_400_400/B4DZjnApslH0Ag-/0/1756222365034?e=1778112000&v=beta&t=awxDsKbABhsP-pVqPyvdhTczxoDzrZ3vCO-1JC4rIhA"
+  },
 ];
 
 const TIMELINE_DATA = [
@@ -512,7 +534,7 @@ function renderQuemSomos() {
       <div class="grid-3 mb-40">
         ${TEAM.map((p,i) => `
           <div class="card hover text-center" style="animation-delay:${0.15+i*0.1}s">
-            <div class="team-avatar">${p.initials}</div>
+            <div class="team-avatar">${p.image}</div>
             <div class="team-name">${p.name}</div>
             <div class="team-role">${p.role}</div>
             <p class="team-bio">${p.bio}</p>
